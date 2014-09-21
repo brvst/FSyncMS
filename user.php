@@ -91,9 +91,9 @@
     if(($preinstr =='misc') && ($_SERVER['REQUEST_METHOD'] == 'GET') && ($username =='captcha_html'))
     {
         if(ENABLE_REGISTER)
-            exit("And click to the next page");
+            exit("Fill in the details and click next.");
         else
-            exit("Register to this Server is not permitted, sorry");
+            exit("Registration is currently closed, sorry.");
     }
     
     //probably no need but...
