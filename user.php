@@ -256,6 +256,13 @@
             {
                 //change email adr
             }
+            else if($function == "delete_account")
+            {
+                //remove account and data from sync server
+                // 1. verify user auth
+                // 2. get collections + data and remove data
+                // 3. remove user account
+            }
             else
             {
                 report_problem(WEAVE_ERROR_INVALID_PROTOCOL, 400);
