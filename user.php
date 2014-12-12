@@ -259,9 +259,36 @@
             else if($function == "delete_account")
             {
                 //remove account and data from sync server
-                // 1. verify user auth
-                // 2. get collections + data and remove data
-                // 3. remove user account
+                // 1. verify user auth, needs $auth_pw passed to function.
+                if($auth_pw == '')
+                {
+                  log_error("user.php : delete account, no auth password given");
+                  report_problem(WEAVE_ERROR_MISSING_PASSWORD, 400);
+                }
+                try 
+                {
+                  $existingHash = $db->get_password_hash(); //passes $username internally
+                  $hash = WeaveHashFactory::factory();
+         
+                  if ( ! $hash->verify(fix_utf8_encoding($auth_pw), $existingHash) )
+                  {
+                    log_error("Auth failed 2 {");
+                    log_error(" User pw: ". $auth_user ."|".$auth_pw ."|md5:". md5($auth_pw) ."|fix:". fix_utf8_encoding($auth_pw) ."|fix md5 ". md5(fix_utf8_encoding($auth_pw)));
+                    log_error(" Url_user: ".$url_user);
+                    log_error(" Existing hash: ".$existingHash);
+                    log_error("}");
+                    report_problem('Authentication failed', '401');
+                  } else {
+                    // 2. get collections + data and remove data
+                    // 3. remove user account
+                  }
+                }
+                catch(Exception $e)
+                {
+                  header("X-Weave-Backoff: 1800");
+                  log_error($e->getMessage(), $e->getCode());
+                  report_problem($e->getMessage(), $e->getCode());
+                }
             }
             else
             {
