@@ -1,22 +1,27 @@
 FSyncMS
 =======
 
-PHP Sync Server für Firefox Sync
-Eine Erweiterung des Weave-Minimal Server (dessen Support leider eingestellt wurde).
+PHP Sync Server for Firefox/Pale Moon Sync
+An extension of the Weave-Minimal Server.
 
-Die derzeit aktuelle Versionen,
-sowie alte Versionen und Anleitungen sind hier:
+More information about the original implementation of this server, past versions, etc.
+can be found here:
 
 https://www.ohnekontur.de/category/technik/sync/fsyncms/
 
-zu finden.
-Weitere Erweiterungen sind in Planung.
-Stay tuned.
+Although the original author has planned further extesnions to this implementation,
+the current state of this server implementation is rather stagnant ans missing two
+important features:
+* Delete account from the web
+* Reset password from the web (similar to reset inside the client)
 
+Current state is the state as-used by the Pale Moon Sync service, which is v0.13 with some minor updates.
 
-Visit http://www.ohnekontur.de/2011/07/24/how-to-install-fsyncms-firefox-sync-eigener-server/ for install instructions
-Visit http://www.ohnekontur.de for the newest version
+If you wish to help complete the missing features, please feel free to clone this repository and make 
+the necessary edits -- kindly submit a pull request after you've tested your changes so it can be merged
+back in and improve this software!
 
+Release notes for older original versions:
 
 FSyncMS v013
 ======
