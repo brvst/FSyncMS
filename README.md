@@ -9,19 +9,27 @@ can be found here:
 
 https://www.ohnekontur.de/category/technik/sync/fsyncms/
 
-Although the original author has planned further extesnions to this implementation,
-the current state of this server implementation is rather stagnant ans missing two
+Although the original author has planned further extensions to this implementation,
+the current state of this server implementation is rather stagnant and missing two
 important features:
 * Delete account from the web
 * Reset password from the web (similar to reset inside the client)
 
-Current state is the state as-used by the Pale Moon Sync service, which is v0.13 with some minor updates.
+Current state is the state as-used by the Pale Moon Sync service, which is v0.13b with some minor updates.
 
 If you wish to help complete the missing features, please feel free to clone this repository and make 
 the necessary edits -- kindly submit a pull request after you've tested your changes so it can be merged
 back in and improve this software!
 
 Release notes for older original versions:
+
+FSyncMS v013b
+======
+Password Change Bug-fix
+
+There has been a bug in FSyncMS v 0.13: if you tried to update your password via Firefox, the wrong hash
+was written in the Database. As a result the account was no longer usable, but no data should be lost.
+This update fixes the Bug.
 
 FSyncMS v013
 ======
