@@ -20,6 +20,7 @@
 #
 # Contributor(s):
 #   Daniel Triendl <daniel@pew.cc>
+#   Mark Straver <moonchild@palemoon.org>
 #
 # Alternatively, the contents of this file may be used under the terms of
 # either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -52,6 +53,19 @@
 
 
     define ('LOG_THE_ERROR', 0);
+    define ('LOG_QUOTAS', 1);
+
+    function log_quota($msg) 
+    {   
+        if ( LOG_QUOTAS == 1 ) 
+        {
+            $datei = fopen("/tmp/FSyncMS-quota.log","a");
+            $fmsg = sprintf("$msg\n");
+            fputs($datei,$fmsg);
+            // fputs($datei,"Server ".print_r( $_SERVER, true));
+            fclose($datei);
+        }
+    }
 
     function log_error($msg) 
     {   
@@ -60,7 +74,7 @@
             $datei = fopen("/tmp/FSyncMS-error.txt","a");
             $fmsg = sprintf("$msg\n");
             fputs($datei,$fmsg);
-            fputs($datei,"Server ".print_r( $_SERVER, true));
+            // fputs($datei,"Server ".print_r( $_SERVER, true));
             fclose($datei);
         }
     }
