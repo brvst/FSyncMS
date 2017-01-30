@@ -50,6 +50,7 @@
 	define ('WEAVE_ERROR_FUNCTION_NOT_SUPPORTED', 11);
 	define ('WEAVE_ERROR_NO_EMAIL', 12);
 	define ('WEAVE_ERROR_INVALID_COLLECTION', 13);
+	define ('WEAVE_ERROR_OVER_QUOTA', 14);
 
 
     define ('LOG_THE_ERROR', 0);
@@ -256,7 +257,20 @@
 
 	function check_quota(&$db)
 	{
-		return;
+	   // Checks the quota and if over limit, returns "over quota" to the user.
+	   $auth_user = array_key_exists('PHP_AUTH_USER', $_SERVER) ? $_SERVER['PHP_AUTH_USER'] : null;
+	   try {
+		$quota_used = $db->get_storage_total();
+		// log_quota("Debug quota: ".$auth_user." @ ".$quota_used." KB.");
+		} catch (Exception $e) {
+		  log_error($e->getMessage(), $e->getCode());
+		}
+      
+	   if ($quota_used > 35000) {
+	      log_quota("[!!] Over quota: ".$auth_user." @ ".$quota_used." KB.");
+	      // HTTP 400 with body error code 14 means over quota.
+	      report_problem(WEAVE_ERROR_OVER_QUOTA, 400);
+	   }
 	}
 	
 	function check_timestamp($collection, &$db)
