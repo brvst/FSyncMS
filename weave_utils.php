@@ -261,12 +261,12 @@
 	   $auth_user = array_key_exists('PHP_AUTH_USER', $_SERVER) ? $_SERVER['PHP_AUTH_USER'] : null;
 	   try {
 		$quota_used = $db->get_storage_total();
-		log_quota("Debug quota: ".$auth_user." @ ".$quota_used." KB.");
+		// log_quota("Debug quota: ".$auth_user." @ ".$quota_used." KB.");
 		} catch (Exception $e) {
 		  log_error($e->getMessage(), $e->getCode());
 		}
       
-	   if ($quota_used > 25000) {
+	   if ($quota_used > 35000) {
 	      log_quota("[!!] Over quota: ".$auth_user." @ ".$quota_used." KB.");
 	      // HTTP 400 with body error code 14 means over quota.
 	      report_problem(WEAVE_ERROR_OVER_QUOTA, 400);
