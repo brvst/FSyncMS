@@ -269,7 +269,7 @@
 
 		if ((defined("MINQUOTA") && MINQUOTA) && (defined("MAXQUOTA") && MAXQUOTA)) {
 			if ($quota_used > MINQUOTA && $quota_used < MAXQUOTA) {
-				report_problem(WEAVE_ERROR_OVER_QUOTA, 400);
+				// We should send a header warning of nearing quota, here.
 				log_quota("[!!] Over quota [MINQUOTA:MAXQUOTA]: ".$auth_user." @ ".$quota_used." KB.");
 				if (defined(MINQUOTA_LOG_ERROR_OVER_QUOTA_ENABLE) && MINQUOTA_LOG_ERROR_OVER_QUOTA_ENABLE) {
 					log_error(" MinQUOTA exceeding: ".$quota_used." KB.");
