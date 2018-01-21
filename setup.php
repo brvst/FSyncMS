@@ -23,6 +23,7 @@
 # Contributor(s):
 #   Daniel Triendl <daniel@pew.cc>
 #   balu
+#   Christian Wittmer <chris@computersalat.de>
 # 
 # Alternatively, the contents of this file may be used under the terms of
 # either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -155,6 +156,15 @@ function write_config_file($dbt, $dbh, $dbn, $dbu, $dbp, $fsRoot) {
     $cfg_content .= "    // Use bcrypt instead of MD5 for password hashing\n";
     $cfg_content .= "    define(\"BCRYPT\", true);\n";
     $cfg_content .= "    define(\"BCRYPT_ROUNDS\", 12);\n";
+
+    $cfg_content .= "\n";
+    $cfg_content .= "    // you can enable logging to syslog for MINQUOTA_ERROR_OVER_QUOTA\n";
+    $cfg_content .= "    // if (quota_used > MINQUOTA && quota_used < MAXQUOTA)\n";
+    $cfg_content .= "    define(\"MINQUOTA_LOG_ERROR_OVER_QUOTA_ENABLE\", false);\n";
+    $cfg_content .= "\n";
+    $cfg_content .= "    // set MinQuota and MaxQuota\n";
+    $cfg_content .= "    define(\"MINQUOTA\", 30000);\n";
+    $cfg_content .= "    define(\"MAXQUOTA\", 35000);\n";
 
     $cfg_content .= "\n?>\n";
 

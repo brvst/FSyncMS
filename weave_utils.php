@@ -21,6 +21,7 @@
 # Contributor(s):
 #   Daniel Triendl <daniel@pew.cc>
 #   Mark Straver <moonchild@palemoon.org>
+#   Christian Wittmer <chris@computersalat.de>
 #
 # Alternatively, the contents of this file may be used under the terms of
 # either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -257,20 +258,29 @@
 
 	function check_quota(&$db)
 	{
-	   // Checks the quota and if over limit, returns "over quota" to the user.
-	   $auth_user = array_key_exists('PHP_AUTH_USER', $_SERVER) ? $_SERVER['PHP_AUTH_USER'] : null;
-	   try {
+		// Checks the quota and if over limit, returns "over quota" to the user.
+		$auth_user = array_key_exists('PHP_AUTH_USER', $_SERVER) ? $_SERVER['PHP_AUTH_USER'] : null;
+		try {
 		$quota_used = $db->get_storage_total();
 		// log_quota("Debug quota: ".$auth_user." @ ".$quota_used." KB.");
 		} catch (Exception $e) {
 		  log_error($e->getMessage(), $e->getCode());
 		}
-      
-	   if ($quota_used > 35000) {
-	      log_quota("[!!] Over quota: ".$auth_user." @ ".$quota_used." KB.");
-	      // HTTP 400 with body error code 14 means over quota.
-	      report_problem(WEAVE_ERROR_OVER_QUOTA, 400);
-	   }
+
+		if ((defined("MINQUOTA") && MINQUOTA) && (defined("MAXQUOTA") && MAXQUOTA)) {
+			if ($quota_used > MINQUOTA && $quota_used < MAXQUOTA) {
+				report_problem(WEAVE_ERROR_OVER_QUOTA, 400);
+				log_quota("[!!] Over quota [MINQUOTA:MAXQUOTA]: ".$auth_user." @ ".$quota_used." KB.");
+				if (defined(MINQUOTA_LOG_ERROR_OVER_QUOTA_ENABLE) && MINQUOTA_LOG_ERROR_OVER_QUOTA_ENABLE) {
+					log_error(" MinQUOTA exceeding: ".$quota_used." KB.");
+				}
+			}
+			if ($quota_used > MAXQUOTA) {
+				log_quota("[!!] Over quota: ".$auth_user." @ ".$quota_used." KB.");
+				// HTTP 400 with body error code 14 means over quota.
+				report_problem(WEAVE_ERROR_OVER_QUOTA, 400);
+			}
+		}
 	}
 	
 	function check_timestamp($collection, &$db)

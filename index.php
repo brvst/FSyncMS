@@ -23,6 +23,7 @@
 # Contributor(s):
 #	Toby Elliott (telliott@mozilla.com)
 #   Luca Tettamanti
+#   Christian Wittmer <chris@computersalat.de>
 #
 # Alternatively, the contents of this file may be used under the terms of
 # either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -88,7 +89,7 @@
 	log_error("start request_____" . $path); 
     // ensure that we got a valid request
     if ( !$path ) 
-        report_problem("Invalid request, this was not a firefox sync request!", 400);
+        report_problem("Invalid request!", 400);
 
     // split path into parts and make sure that all values are properly initialized
     list($version, $username, $function, $collection, $id) = array_pad(explode('/', $path.'///'), 5, '');
