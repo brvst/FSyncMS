@@ -268,15 +268,19 @@
 		}
 
 		if ((defined("MINQUOTA") && MINQUOTA) && (defined("MAXQUOTA") && MAXQUOTA)) {
-			if ($quota_used > MINQUOTA && $quota_used < MAXQUOTA) {
-				// We should send a header warning of nearing quota, here.
-				log_quota("[!!] Over quota [MINQUOTA:MAXQUOTA]: ".$auth_user." @ ".$quota_used." KB.");
+			if ($quota_used > MINQUOTA && $quota_used <= MAXQUOTA) {
+				// Inform the sync client they are nearing the quota
+				$quota_remaining = (MAXQUOTA - $quota_used);
+				$quota_remaining_bytes = $quota_remaining * 1024;
+				header("X-Weave-Quota-Remaining: ".$quota_remaining_bytes);
+				
+				log_quota(date("Y-m-d H:i:s")." Nearing quota: ".$auth_user." - ".$quota_remaining." KB remaining.");
 				if (defined(MINQUOTA_LOG_ERROR_OVER_QUOTA_ENABLE) && MINQUOTA_LOG_ERROR_OVER_QUOTA_ENABLE) {
-					log_error(" MinQUOTA exceeding: ".$quota_used." KB.");
+					log_error("Quota warning issued: ".$quota_used."/".MAXQUOTA." KB used.");
 				}
 			}
 			if ($quota_used > MAXQUOTA) {
-				log_quota("[!!] Over quota: ".$auth_user." @ ".$quota_used." KB.");
+				log_quota(date("Y-m-d H:i:s")." [!!] Over quota: ".$auth_user." @ ".$quota_used." KB.");
 				// HTTP 400 with body error code 14 means over quota.
 				report_problem(WEAVE_ERROR_OVER_QUOTA, 400);
 			}
