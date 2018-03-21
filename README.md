@@ -15,7 +15,7 @@ important features:
 * Delete account from the web
 * Reset password from the web (similar to reset inside the client)
 
-Current state is the state as-used by the Pale Moon Sync service, which is v0.13b with some minor updates.
+Current state is the state as-used by the Pale Moon Sync service, which is v0.14.
 
 If you wish to help complete the missing features, please feel free to clone this repository and make 
 the necessary edits -- kindly submit a pull request after you've tested your changes so it can be merged
@@ -23,7 +23,16 @@ back in and improve this software!
 
 Release notes for older original versions:
 
-FSyncMS v013b
+FSyncMS v0.14
+======
+
+- Improved database update efficiency (use INSERT with duplicate key detection)
+- Implemented hard quota cap
+- Implemented soft quota cap
+- Reduced returned server information on error
+- Implemented warning level header
+
+FSyncMS v0.13.1
 ======
 Password Change Bug-fix
 
@@ -31,18 +40,18 @@ There has been a bug in FSyncMS v 0.13: if you tried to update your password via
 was written in the Database. As a result the account was no longer usable, but no data should be lost.
 This update fixes the Bug.
 
-FSyncMS v013
+FSyncMS v0.13
 ======
 Database upgrade
 for more information and some migration notice see
 http://www.ohnekontur.de/2013/07/05/fsyncms-version-0-13-database-upgrade/
 
 
-FSyncMS v012
+FSyncMS v0.12
 ======
 Compatibility update 
 
-FSyncMS v011
+FSyncMS v0.11
 ======
 Added dedicated setup script, which will create the database and the config file: settings.php
 
@@ -73,11 +82,11 @@ If you want to create it by your own, just generate the settings.php with the fo
     ?>
 
 
-FSyncMS v010
+FSyncMS v0.10
 ======
 MYSQL Support
 
-FSyncMS v 09
+FSyncMS v 0.9
 ======
 Change Password now supported 
 working with firefox 12 (and lower)
@@ -85,7 +94,7 @@ working with firefox 12 (and lower)
 Changelog:
 Added change Password feature
 
-FSyncMS v 08
+FSyncMS v 0.8
 ======
 Should be working with firefox 11 and lower (tested with 11)
 
