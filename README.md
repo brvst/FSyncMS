@@ -21,7 +21,7 @@ If you wish to help complete the missing features, please feel free to clone thi
 the necessary edits -- kindly submit a pull request after you've tested your changes so it can be merged
 back in and improve this software!
 
-Release notes for older original versions:
+Release notes:
 
 FSyncMS v0.14
 ======
