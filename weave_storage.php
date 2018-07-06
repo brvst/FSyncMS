@@ -731,6 +731,25 @@ class WeaveStorage
         }
         return 1;
     }
+    
+    function store_user_login($username)
+    {
+        try
+        {
+            $update_statement = "update users set login = :logintime where username = :username";
+
+            $sth = $this->_dbh->prepare($update_statement);
+            $sth->bindParam(':username', $username);
+            $sth->bindParam(':logintime', time());
+            $sth->execute();
+        }
+        catch( PDOException $exception )
+        {
+            log_error("update login:" . $exception->getMessage());
+            return 0;
+        }
+        return 1;
+    }        
 
     function create_user($username, $password)
     {

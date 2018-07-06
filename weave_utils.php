@@ -252,7 +252,8 @@
 			log_error($e->getMessage(), $e->getCode());
 			report_problem($e->getMessage(), $e->getCode());
 		}
-
+        // Login success - record login time
+        $db->store_user_login($auth_user);
 		return true;
 	}
 
