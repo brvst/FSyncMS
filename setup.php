@@ -357,7 +357,8 @@ if ( $action == "step2" ) {
             $create_statement = " create table wbo ( username varchar(100), id varchar(65), collection varchar(100),
                  parentid  varchar(65), predecessorid int, modified real, sortindex int,
                  payload text, payload_size int, ttl int, primary key (username,collection,id))";
-            $create_statement2 = " create table users ( username varchar(255), md5 varchar(124), primary key (username)) ";
+            $create_statement2 = " create table users ( username varchar(255), md5 varchar(124), login int, 
+                 primary key (username)) ";
             $index1 = 'create index parentindex on wbo (username, parentid)';
             $index2 = 'create index predecessorindex on wbo (username, predecessorid)';
             $index3 = 'create index modifiedindex on wbo (username, collection, modified)';
