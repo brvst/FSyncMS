@@ -757,7 +757,7 @@ class WeaveStorage
 
         try
         {
-            $create_statement = "insert into users values (:username, :md5)";
+            $create_statement = "insert into users (username, md5, login) values (:username, :md5, null)";
 
             $sth = $this->_dbh->prepare($create_statement);
             $hash = WeaveHashFactory::factory();
