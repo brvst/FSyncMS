@@ -737,10 +737,11 @@ class WeaveStorage
         try
         {
             $update_statement = "update users set login = :logintime where username = :username";
+            $time = time();
 
             $sth = $this->_dbh->prepare($update_statement);
             $sth->bindParam(':username', $username);
-            $sth->bindParam(':logintime', time());
+            $sth->bindParam(':logintime', $time);
             $sth->execute();
         }
         catch( PDOException $exception )
