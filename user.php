@@ -127,12 +127,19 @@
 
                 // modification to support iPhone/iPod Touch devices
                 // check http://www.rfkd.de/?p=974 for further details
+                $port = parse_url(FSYNCMS_ROOT, PHP_URL_PORT);
+                $url_port = '';
+                // If the url has a port
+                if ($port != '')
+                    $url_port = ":" . $port;
+                // New URL
+                $parsed_url = parse_url(FSYNCMS_ROOT, PHP_URL_HOST) . $url_port . parse_url(FSYNCMS_ROOT, PHP_URL_PATH);
                 if (isset($_SERVER['HTTPS'])) {
-                    exit("https://" . parse_url(FSYNCMS_ROOT, PHP_URL_HOST) . parse_url(FSYNCMS_ROOT, PHP_URL_PATH));
+                    exit("https://" . $parsed_url);
                 } else {
                     // allow http requests because use of self-signed certificates
                     // on iPhone/iPod Touch devices doesn't work
-                    exit("http://"  . parse_url(FSYNCMS_ROOT, PHP_URL_HOST) . parse_url(FSYNCMS_ROOT, PHP_URL_PATH));
+                    exit("http://"  . $parsed_url);
                 }
             }
             else if($function == 'password_reset')

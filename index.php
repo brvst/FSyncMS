@@ -198,7 +198,8 @@
 		else if ($_SERVER['REQUEST_METHOD'] == 'PUT') #add a single record to the server
 		{
 			$wbo = new wbo();
-			if (!$wbo->extract_json(get_json()))
+			$json = get_json();
+			if (!$wbo->extract_json($json))
 				report_problem(WEAVE_ERROR_JSON_PARSE, 400);
 
 			check_quota($db);
