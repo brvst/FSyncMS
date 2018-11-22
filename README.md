@@ -15,13 +15,20 @@ important features:
 * Delete account from the web
 * Reset password from the web (similar to reset inside the client)
 
-Current state is the state as-used by the Pale Moon Sync service, which is v0.14.
+Current state is the state as-used by the Pale Moon Sync service, which is v0.15.
 
 If you wish to help complete the missing features, please feel free to clone this repository and make 
 the necessary edits -- kindly submit a pull request after you've tested your changes so it can be merged
 back in and improve this software!
 
 Release notes:
+
+FSyncMS v0.15
+======
+
+- Improved compatibility with PHP 7
+- Fixed an issue with the port being stripped from weave cluster URLs
+- Added keeping track of last login of users to cater to pruning the database of stale accounts
 
 FSyncMS v0.14
 ======
