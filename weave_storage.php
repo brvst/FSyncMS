@@ -629,21 +629,62 @@ class WeaveStorage
 
     function get_storage_total()
     {
+        $username = $this->_username;
+        $time = time();
+        
         try
         {
-            $select_stmt = 'select round(sum(length(payload))/1024) from wbo where username = :username';
+            $select_stmt = 'select usage, usage_time from users where username = :username';
             $sth = $this->_dbh->prepare($select_stmt);
-            $username = $this->_username;
             $sth->bindParam(':username', $username);
             $sth->execute();
         }
         catch( PDOException $exception )
         {
-            error_log("get_storage_total: " . $exception->getMessage());
+            error_log("get_storage_total (user field): " . $exception->getMessage());
             throw new Exception("Database unavailable", 503);
         }
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
+        if ($result['usage'] != NULL &&
+            $result['usage_time'] != NULL &&
+            ((int)$result['usage'] != 0) &&
+            ($time - (int)$result['usage_time'] < 300)) {
+            # We have a usage size and it's recent enough; use cached value
+            return (int)$result['usage'];
+        }
+        else
+        {
+            # We don't have a current cached value. Retrieve and store.
+        	try
+        	{
+            	$select_stmt = 'select round(sum(length(payload))/1024) from wbo where username = :username';
+            	$sth = $this->_dbh->prepare($select_stmt);
+            	$sth->bindParam(':username', $username);
+            	$sth->execute();
+        	}
+        	catch( PDOException $exception )
+        	{
+            	error_log("get_storage_total: " . $exception->getMessage());
+            	throw new Exception("Database unavailable", 503);
+        	}
 
-        return (int)$sth->fetchColumn();
+        	$usage = (int)$sth->fetchColumn();
+        	try
+        	{
+            	$update_stmt = 'update users set usage = :usage, usage_time = :usage_time where username = :username';
+            	$sth = $this->_dbh->prepare($update_stmt);
+            	$sth->bindParam(':username', $username);
+            	$sth->bindParam(':usage', $usage);
+            	$sth->bindParam(':usage_time', $time);
+            	$sth->execute();
+        	}
+        	catch( PDOException $exception )
+        	{
+            	error_log("get_storage_total (store): " . $exception->getMessage());
+            	throw new Exception("Database unavailable", 503);
+        	}
+        	return $usage;
+        }
     }
 
     function get_collection_storage_totals()
