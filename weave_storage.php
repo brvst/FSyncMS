@@ -634,7 +634,7 @@ class WeaveStorage
         
         try
         {
-            $select_stmt = 'select usage, usage_time from users where username = :username';
+            $select_stmt = 'select quota_usage, usage_time from users where username = :username';
             $sth = $this->_dbh->prepare($select_stmt);
             $sth->bindParam(':username', $username);
             $sth->execute();
@@ -645,45 +645,48 @@ class WeaveStorage
             throw new Exception("Database unavailable", 503);
         }
         $result = $sth->fetch(PDO::FETCH_ASSOC);
-        if ($result['usage'] != NULL &&
+        if ($result['quota_usage'] != NULL &&
             $result['usage_time'] != NULL &&
-            ((int)$result['usage'] != 0) &&
-            ($time - (int)$result['usage_time'] < 300)) {
+            ((int)$result['quota_usage'] != 0) &&
+            ($time - (int)$result['usage_time'] < QUOTA_TTL)) {
             # We have a usage size and it's recent enough; use cached value
-            return (int)$result['usage'];
+            return (int)$result['quota_usage'];
         }
         else
         {
             # We don't have a current cached value. Retrieve and store.
-        	try
-        	{
-            	$select_stmt = 'select round(sum(length(payload))/1024) from wbo where username = :username';
-            	$sth = $this->_dbh->prepare($select_stmt);
-            	$sth->bindParam(':username', $username);
-            	$sth->execute();
-        	}
-        	catch( PDOException $exception )
-        	{
-            	error_log("get_storage_total: " . $exception->getMessage());
-            	throw new Exception("Database unavailable", 503);
-        	}
+            try
+            {
+                $select_stmt = 'select round(sum(length(payload))/1024) from wbo where username = :username';
+                $sth = $this->_dbh->prepare($select_stmt);
+                $sth->bindParam(':username', $username);
+                $sth->execute();
+            }
+            catch( PDOException $exception )
+            {
+                error_log("get_storage_total: " . $exception->getMessage());
+                throw new Exception("Database unavailable", 503);
+            }
 
-        	$usage = (int)$sth->fetchColumn();
-        	try
-        	{
-            	$update_stmt = 'update users set usage = :usage, usage_time = :usage_time where username = :username';
-            	$sth = $this->_dbh->prepare($update_stmt);
-            	$sth->bindParam(':username', $username);
-            	$sth->bindParam(':usage', $usage);
-            	$sth->bindParam(':usage_time', $time);
-            	$sth->execute();
-        	}
-        	catch( PDOException $exception )
-        	{
-            	error_log("get_storage_total (store): " . $exception->getMessage());
-            	throw new Exception("Database unavailable", 503);
-        	}
-        	return $usage;
+            $usage = (int)$sth->fetchColumn();
+
+            try
+            {
+                $update_stmt = 'update users set quota_usage = :usage, usage_time = :usage_time where username = :username';
+                $sth = $this->_dbh->prepare($update_stmt);
+                $sth->bindParam(':username', $username);
+                $sth->bindParam(':usage', $usage);
+                $sth->bindParam(':usage_time', $time);
+                // error_log("Store query: update users set quota_usage = ".$usage.", usage_time = ".$time." where username = ".$username);
+                $sth->execute();
+            }
+            catch( PDOException $exception )
+            {
+                error_log("get_storage_total (store): " . $exception->getMessage());
+                throw new Exception("Database unavailable", 503);
+            }
+
+            return $usage;
         }
     }
 
@@ -799,7 +802,8 @@ class WeaveStorage
 
         try
         {
-            $create_statement = "insert into users (username, md5, login) values (:username, :md5, null)";
+            $create_statement = "insert into users (username, md5, login, quota_usage, usage_time)
+                                 values (:username, :md5, null, 0, 0)";
 
             $sth = $this->_dbh->prepare($create_statement);
             $hash = WeaveHashFactory::factory();

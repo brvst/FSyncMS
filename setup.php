@@ -165,6 +165,9 @@ function write_config_file($dbt, $dbh, $dbn, $dbu, $dbp, $fsRoot) {
     $cfg_content .= "    // set MinQuota and MaxQuota\n";
     $cfg_content .= "    define(\"MINQUOTA\", 30000);\n";
     $cfg_content .= "    define(\"MAXQUOTA\", 35000);\n";
+    $cfg_content .= "    // The setting below determines the time to live for quota totals\n";
+    $cfg_content .= "    // before recalculating how much database space has been used.\n";
+    $cfg_content .= "    define(\"QUOTA_TTL\", 3600);\n";
 
     $cfg_content .= "\n?>\n";
 
@@ -357,7 +360,8 @@ if ( $action == "step2" ) {
             $create_statement = " create table wbo ( username varchar(100), id varchar(65), collection varchar(100),
                  parentid  varchar(65), predecessorid int, modified real, sortindex int,
                  payload text, payload_size int, ttl int, primary key (username,collection,id))";
-            $create_statement2 = " create table users ( username varchar(255), md5 varchar(124), login int, 
+            $create_statement2 = " create table users ( username varchar(255), md5 varchar(124), login int,
+                 quota_usage int, usage_time int,
                  primary key (username)) ";
             $index1 = 'create index parentindex on wbo (username, parentid)';
             $index2 = 'create index predecessorindex on wbo (username, predecessorid)';

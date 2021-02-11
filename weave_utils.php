@@ -55,15 +55,15 @@
 
 
     define ('LOG_THE_ERROR', 0);
-    define ('LOG_QUOTAS', 1);
+    define ('LOG_QUOTAS', 0);
 
     function log_quota($msg) 
     {   
         if ( LOG_QUOTAS == 1 ) 
         {
             $datei = fopen("/tmp/FSyncMS-quota.log","a");
-            $fmsg = sprintf("$msg\n");
-            fputs($datei,$fmsg);
+            // $fmsg = sprintf("$msg\n");
+            fputs($datei,"$msg\n");
             // fputs($datei,"Server ".print_r( $_SERVER, true));
             fclose($datei);
         }
@@ -74,8 +74,8 @@
         if ( LOG_THE_ERROR == 1 ) 
         {
             $datei = fopen("/tmp/FSyncMS-error.txt","a");
-            $fmsg = sprintf("$msg\n");
-            fputs($datei,$fmsg);
+            // $fmsg = sprintf("$msg\n");
+            fputs($datei,"$msg\n");
             // fputs($datei,"Server ".print_r( $_SERVER, true));
             fclose($datei);
         }
