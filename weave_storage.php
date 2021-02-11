@@ -794,8 +794,25 @@ class WeaveStorage
             return 0;
         }
         return 1;
-    }        
+    }       
 
+    function clear_quota_usage($username)
+    {
+        try
+        {
+            $update_statement = "update users set quota_usage = 0 where username = :username";
+            $sth = $this->_dbh->prepare($update_statement);
+            $sth->bindParam(':username', $username);
+            $sth->execute();
+        }
+        catch( PDOException $exception )
+        {
+            log_error("clear quota usage:" . $exception->getMessage());
+            return 0;
+        }
+        return 1;
+    }
+    
     function create_user($username, $password)
     {
         log_error("Create User - Username: ".$username."|".$password);
