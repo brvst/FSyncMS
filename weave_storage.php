@@ -629,21 +629,65 @@ class WeaveStorage
 
     function get_storage_total()
     {
+        $username = $this->_username;
+        $time = time();
+        
         try
         {
-            $select_stmt = 'select round(sum(length(payload))/1024) from wbo where username = :username';
+            $select_stmt = 'select quota_usage, usage_time from users where username = :username';
             $sth = $this->_dbh->prepare($select_stmt);
-            $username = $this->_username;
             $sth->bindParam(':username', $username);
             $sth->execute();
         }
         catch( PDOException $exception )
         {
-            error_log("get_storage_total: " . $exception->getMessage());
+            error_log("get_storage_total (user field): " . $exception->getMessage());
             throw new Exception("Database unavailable", 503);
         }
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
+        if ($result['quota_usage'] != NULL &&
+            $result['usage_time'] != NULL &&
+            ((int)$result['quota_usage'] != 0) &&
+            ($time - (int)$result['usage_time'] < QUOTA_TTL)) {
+            # We have a usage size and it's recent enough; use cached value
+            return (int)$result['quota_usage'];
+        }
+        else
+        {
+            # We don't have a current cached value. Retrieve and store.
+            try
+            {
+                $select_stmt = 'select round(sum(length(payload))/1024) from wbo where username = :username';
+                $sth = $this->_dbh->prepare($select_stmt);
+                $sth->bindParam(':username', $username);
+                $sth->execute();
+            }
+            catch( PDOException $exception )
+            {
+                error_log("get_storage_total: " . $exception->getMessage());
+                throw new Exception("Database unavailable", 503);
+            }
 
-        return (int)$sth->fetchColumn();
+            $usage = (int)$sth->fetchColumn();
+
+            try
+            {
+                $update_stmt = 'update users set quota_usage = :usage, usage_time = :usage_time where username = :username';
+                $sth = $this->_dbh->prepare($update_stmt);
+                $sth->bindParam(':username', $username);
+                $sth->bindParam(':usage', $usage);
+                $sth->bindParam(':usage_time', $time);
+                // error_log("Store query: update users set quota_usage = ".$usage.", usage_time = ".$time." where username = ".$username);
+                $sth->execute();
+            }
+            catch( PDOException $exception )
+            {
+                error_log("get_storage_total (store): " . $exception->getMessage());
+                throw new Exception("Database unavailable", 503);
+            }
+
+            return $usage;
+        }
     }
 
     function get_collection_storage_totals()
@@ -750,15 +794,33 @@ class WeaveStorage
             return 0;
         }
         return 1;
-    }        
+    }       
 
+    function clear_quota_usage($username)
+    {
+        try
+        {
+            $update_statement = "update users set quota_usage = 0 where username = :username";
+            $sth = $this->_dbh->prepare($update_statement);
+            $sth->bindParam(':username', $username);
+            $sth->execute();
+        }
+        catch( PDOException $exception )
+        {
+            log_error("clear quota usage:" . $exception->getMessage());
+            return 0;
+        }
+        return 1;
+    }
+    
     function create_user($username, $password)
     {
         log_error("Create User - Username: ".$username."|".$password);
 
         try
         {
-            $create_statement = "insert into users (username, md5, login) values (:username, :md5, null)";
+            $create_statement = "insert into users (username, md5, login, quota_usage, usage_time)
+                                 values (:username, :md5, null, 0, 0)";
 
             $sth = $this->_dbh->prepare($create_statement);
             $hash = WeaveHashFactory::factory();

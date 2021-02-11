@@ -280,6 +280,7 @@
 			if ($id)
 			{
 				$db->delete_object($collection, $id);
+				$db->clear_quota_usage($username);
 			}
 			else if ($collection)
 			{
@@ -293,12 +294,14 @@
 								$params['ids'],
 								$params['index_above'], $params['index_below']
 							);
+				$db->clear_quota_usage($username);
 			}
             else if($function == 'storage') // ich vermute mal storage reinigen
             {
                 if (!array_key_exists('HTTP_X_CONFIRM_DELETE', $_SERVER))
                      report_problem(WEAVE_ERROR_NO_OVERWRITE, 412);
                 $db->delete_storage($username);
+                $db->clear_quota_usage($username);
             }
 			else
 			{ 
