@@ -648,8 +648,9 @@ class WeaveStorage
         if ($result['quota_usage'] != NULL &&
             $result['usage_time'] != NULL &&
             ((int)$result['quota_usage'] != 0) &&
-            ($time - (int)$result['usage_time'] < QUOTA_TTL)) {
-            # We have a usage size and it's recent enough; use cached value
+            ($time - (int)$result['usage_time'] < QUOTA_TTL) &&
+            ((int)$result['quota_usage'] < MINQUOTA)) {
+            # We have a usage size and it's recent enough and not close to the limit; use cached value
             return (int)$result['quota_usage'];
         }
         else
