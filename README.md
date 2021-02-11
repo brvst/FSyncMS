@@ -15,13 +15,19 @@ important features:
 * Delete account from the web
 * Reset password from the web (similar to reset inside the client)
 
-Current state is the state as-used by the Pale Moon Sync service, which is v0.15.
+Current state is the state as-used by the Pale Moon Sync service, which is v0.16.
 
 If you wish to help complete the missing features, please feel free to clone this repository and make 
 the necessary edits -- kindly submit a pull request after you've tested your changes so it can be merged
 back in and improve this software!
 
 Release notes:
+
+FSyncMS v0.16
+======
+
+- Implemented caching for quota totals calculation (#10), dramatically reducing userland CPU.
+- Switched off Quota logging (should only be enabled if necessary)
 
 FSyncMS v0.15
 ======
